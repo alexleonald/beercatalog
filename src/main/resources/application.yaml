@@ -1,0 +1,102 @@
+spring:
+  application:
+    name: beercatalogue
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.beercatalogue: WARN
+    org.springframework.jdbc: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+app:
+  security:
+    users:
+      - username: admin
+        password: ${ADMIN_PASSWORD:adminpass}
+        roles: ADMIN
+      - username: manu1
+        password: ${MANU1_PASSWORD:manupass1}
+        roles: MANUFACTURER
+      - username: manu2
+        password: ${MANU2_PASSWORD:manupass2}
+        roles: MANUFACTURER
+
+---
+
+# =========================
+# DEV PROFILE (H2)
+# =========================
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:h2:mem:beercatalogue;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+
+---
+
+# =========================
+# DOCKER PROFILE (POSTGRES)
+# =========================
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  datasource:
+    url: jdbc:postgresql://db:5432/beercatalogue
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USER:user}
+    password: ${DB_PASSWORD:password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+---
+
+# =========================
+# AWS RDS PROFILE (POSTGRESQL)
+# =========================
+spring:
+  config:
+    activate:
+      on-profile: aws
+
+  datasource:
+    url: jdbc:postgresql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DB_NAME}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc.batch_size: 25
+        order_inserts: true
+        order_updates: true

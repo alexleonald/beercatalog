@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: beercatalogue
+
+  datasource:
+    url: jdbc:h2:mem:beercatalogue;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: WARN
+    com.beercatalogue: WARN
+    org.hibernate.SQL: ERROR
+    org.springframework.security: ERROR
+    org.hibernate.type.descriptor.sql.BasicBinder: ERROR
+
+app:
+  security:
+    users:
+      - username: admin
+        password: adminpass
+        roles: ADMIN
+      - username: manu1
+        password: manupass
+        roles: MANUFACTURER
+      - username: manu2
+        password: manupass2
+        roles: MANUFACTURER

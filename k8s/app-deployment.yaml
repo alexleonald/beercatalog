@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beer-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beer-app
+  template:
+    metadata:
+      labels:
+        app: beer-app
+    spec:
+      containers:
+        - name: beer-app
+          image: alexleonald/beercatalog:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRING_PROFILES_ACTIVE
+
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRING_DATASOURCE_URL
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_USER
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_PASSWORD
+
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: ADMIN_PASSWORD
+
+            - name: MANU1_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: MANU1_PASSWORD
+
+            - name: MANU2_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: MANU2_PASSWORD
